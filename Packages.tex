@@ -1,0 +1,168 @@
+
+
+
+
+
+%==============================================================
+% YOUR PACKAGES <<<
+%==============================================================
+
+\usepackage{graphicx,mathtools,amsmath,amssymb,amsfonts, bm, upgreek,acronym,enumerate,setspace,calc,epsf,tabularx,color,geometry,xspace}%
+
+\usepackage{psfrag}
+
+\usepackage{enumitem}
+% for paper B
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage[export]{adjustbox}
+
+\let\oldemptyset\emptyset                   % replace \emptyset with \varnothing
+\let\emptyset\varnothing
+\DeclareMathOperator*{\argmin}{arg~min}
+
+
+\usepackage{glossaries}
+\input{YourThesis/glossary.tex}
+\renewcommand*{\glstextformat}[2]{\textcolor{black}{#1}}
+
+
+%%%%%% Self
+%\usepackage[hyphens,spaces]{url}
+\usepackage{scalefnt} 
+\usepackage{lipsum}
+%\usepackage{stfloats}
+%\usepackage{ltxgrid}
+%\usepackage{dblfloatfix}
+%\usepackage{multicol}
+\usepackage{caption}
+%\usepackage{blindtext}
+\usepackage{longtable}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{textcomp}
+\usepackage{multirow}
+\usepackage{empheq}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{subcaption} 
+\usepackage{pgfplots}
+\usepackage{float}
+\usepackage{color}
+\usepackage{wasysym}
+%\usepackage{natbib}
+\usepackage{nomencl}
+\usepackage{gensymb}
+
+%\usepackage[style=ieee]{biblatex}
+
+% Paper A
+\providecommand{\keywords}[1]{\textbf{Index terms---} #1}
+\usepackage{graphicx}
+\usepackage{bm}
+\usepackage{enumerate}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{color}
+\usepackage{url}
+
+% *** MATH PACKAGES ***
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+%\DeclareMathOperator*{\argmax}{argmax}
+
+\usepackage{epstopdf}
+
+% *** ALIGNMENT PACKAGES ***
+\usepackage{array}
+
+% Paper B
+% \usepackage{graphicx}
+% \usepackage{bm}
+% \usepackage{enumerate}
+% \usepackage{float}
+%\usepackage{multicol}
+%\usepackage{flushend}
+
+
+% For theorems and proofs
+
+%%%%%%%%%%%%
+%use at the end!!!!
+%%%%%%%%%%%%
+%\usepackage[keeplastbox]{flushend}
+%\usepackage[nospread]{flushend}
+
+
+%use at the end!!!!
+%\AtEndDocument{\par\leavevmode}
+
+%\usepackage{color}
+%\usepackage{url}
+
+
+
+
+
+
+% *** MATH PACKAGES ***
+%
+% \usepackage{amsmath}
+% \usepackage{amsthm}
+
+
+
+% %\usepackage{mathptmx}
+% \usepackage{amssymb}
+
+\DeclareMathOperator*{\argmax}{argmax}
+% \renewcommand{\qedsymbol}{$\blacksquare$}
+
+% \newtheorem{thm}{Theorem}[section]
+% \newtheorem{lem}{Lemma}
+% \newtheorem{prop}[thm]{Proposition}
+% \newtheorem{cor}{Corollary}
+% \newtheorem{conj}{Conjecture}[section]
+% \theoremstyle{definition}
+% \newtheorem{defn}{Definition}[section]
+% \newtheorem{exmp}{Example}[section]
+% \newtheorem{rem}{Remark}
+%\newtheorem{theorem}{Theorem}[section]
+\usepackage{chngcntr}
+
+\newtheorem{corollary}{Corollary}
+\newtheorem{lem}{Lemma}
+\counterwithin*{lem}{paper} 
+\counterwithin*{corollary}{paper} 
+%\newtheorem{lemma}[theorem]{Lemma}
+\usepackage[toc,page]{appendix}
+
+
+
+
+% *** ALIGNMENT PACKAGES ***
+%
+%\usepackage{array}
+
+
+% Paper D
+\DeclareMathOperator\erf{erf}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+
+\acrodef{BS}{base station}
+\acrodef{RA}{receive antenna}
+\acrodef{PA}{predictor antenna}
+\acrodef{IID}{independent and identically distributed}
+\acrodef{CDF}{cumulative distribution function}
+\acrodef{PDF}{probability density function}
+\acrodef{cu}{channel use}
+\acrodef{ACK}{acknowledgement}
+\acrodef{NACK}{negative acknowledgement}
+\acrodef{SNR}{signal-to-noise ratio}
+\acrodef{HARQ}{hybrid automatic repeat request}
+\acrodef{CSIT}{channel state information at the transmitter side}
+\acrodef{INR}{incremental redundancy}
+\acrodef{npcu}{nats per channel use}
+
+

@@ -1,411 +1,366 @@
-\documentclass[12pt,a4paper,twoside,openright,pdftex]{book}
-                              % Reproservice prints on G4, which is about 80% of A4.
-                              % With this scale, 12pt font becomes 9.6pt.
-                              % https://www.chalmers.se/insidan/SV/arbetsredskap/kommunikation/tryck-och-layout/mallar-for-trycksaker/avhandlingens-utformning
-
-\synctex=1                    % instead of "pdflatex -synctex=1 main"
-
-\usepackage{lipsum}           % generating fill-in text for this thesis template
-
-\usepackage{ifthen}           % if-then-else (to choose PhD/Lic titles)
-
-\usepackage[utf8]{inputenc}   % unicode letters in the input tex document
-
-\usepackage[T1]{fontenc}      % unicode letters in the output pdf
-
-\usepackage{amssymb, amsmath} % math symbols
-
-\usepackage{lmodern}          % better font
-
-\usepackage{microtype}        % micro typesetting (on errors use draft to disable)
-
-\usepackage{booktabs}         % better table formatting
-
-\usepackage[pdftex]{graphicx} % images
-
-\usepackage{tikz}             % simply amazing graphics library for LaTeX
-\usetikzlibrary{calc}
-\usetikzlibrary{matrix}
-
-\usepackage[%                 %
-  a4paper%
-  ,twoside                    %
-  ,inner=2.5cm                % inner margin
-  ,outer=2.5cm                % outer margin
-  ,bindingoffset=1cm       % additional binding offset on the inner side
-  ,bottom=3cm
-]{geometry}                   % Adjust the margins
-
-\usepackage{fancyhdr}         % fine-tuning of headers
-\pagestyle{fancy}
-
-\usepackage{emptypage}        % no page numbers in headers/footers of blank pages between chapters
-
-\usepackage{setspace}         % for \setstretch in captions
-
+%==============================================================
+%
+%      Maintainted at
+%      https://github.com/E2-PhD-Council/ThesisTemplate
+%
+%==============================================================
+% document class <<<
+%==============================================================
+%
+%
+\documentclass[
+  paper=23.9cm:16.9cm,
+   % paper=a4,
+  pagesize,
+  twoside,
+  10pt,
+  chapterprefix,
+  headsepline=on,
+  footinclude=off,
+  DIV=18,
+  BCOR=7mm,
+  bibliography=totoc,
+  numbers=noenddot,
+  open=right,
+]{scrreprt}
 \usepackage[%
-    margin=0.75cm,            % make captions narrower than the main text
-    font={small,stretch=0.80}%%
-  ]{caption}                  % captions
+  left=20mm,
+  right=20mm,
+  top=25mm,
+  bottom=25mm,
+]{geometry}
 
-\usepackage{subcaption}       % subcaption -- subfigures (replaces subfig)
+%\usepackage[paperwidth=16.9cm,paperheight=23.9cm]{geometry} % used in cover page
 
-\usepackage{url}              % handles URLs correctly (e.g. DOI, software links)
+\input{TemplateFiles/Packages.tex}
+\usepackage{TemplateFiles/AddMyPapers}
 
-\usepackage[%
-  url=false,%                  % print URLs in references, except for the ones removed below
-  backend=biber,%             % use biber instead of bibtex
-  style=authoryear,%          % cite as: (Author 2008)
-%  maxbibnames=10,%            % max names in bibliography
-   maxcitenames=2,%            % max names in citation
-   maxbibnames=99,
-   giveninits=true,
-%  mincitenames=1,%            % if there are more than maxcitenames, shrink to this
-%  backref=true,%              % prints page numbers (wrong with \frontmatter and hypertexnames=false)
-  dashed=false                % do not replace repeated author with a dash in bibliography
-]{biblatex}                   % Modern bibtex replacement (bibliography mgmt)
-\DeclareNameAlias{author}{last-first}
+\input{Packages.tex}
+\input{Config.tex}
 
-\usepackage[%
-   pdftex%
-  ,hidelinks%
-  ,linktoc=all%               % part of a ToC entry to be made into a link (section/page/all)
-  ,unicode%
-  ,bookmarksopen=true%
-  ,bookmarksopenlevel=0
-  ,bookmarksnumbered=true
-  %,hypertexnames=false,%     % Correct ToC hyperlinks even with chapter counter reset, but broken biblatex backref.
-                              % Instead of using hypertexnames=false, use \renewcommand on \theHchapter, 
-                              % see http://tex.stackexchange.com/a/6099
-  %,draft                     % draft can be used to avoid some strange links errors
-]{hyperref}                   % links in pdf document
+\newcommand{\ThesisTypePhD}{phd}
+\newcommand{\ThesisTypeLic}{licentiate of engineering}
+\ifx \TheThesisType\ThesisTypeLic
+    \newcommand{\TheThesisTypeLong}{Licentiate of Engineering}
+\else
+    \newcommand{\TheThesisTypeLong}{Doctor of Philosophy}
+    \ifx \TheThesisType\ThesisTypePhD \else
+        \PackageError {ThesisTemplate} {Incorrect value of ``ThesisType``, choose either ``phd`` or ``lic``} {The variable ``ThesisType`` decides on the type of thesis to produce, choose ``phd`` to generate a PhD thesis or ``lic`` to generate a licentiate thesis.}
+    \fi
+\fi
+\ifdefined \TheCoverPageSubtitle \if \TheCoverPageSubtitle\empty\else
+    \ifdefined \TheSubtitle \if \TheSubtitle\empty\else
+        \def\ConsistentSubtitle{true}
+    \fi\fi
+    \ifdefined \ConsistentSubtitle \else
+        \PackageError {ThesisTemplate} {Definition of ``TheCoverPageSubtitle`` and ``TheSubtitle`` is inconsistent} {The variable ``TheCoverPageSubtitle`` can not be non-empty when the variable ``TheSubtitle`` is empty or undefined.}
+    \fi
+\fi\fi
 
-\usepackage{bookmark}         % Create pdf bookmarks in one go
-\usepackage{nomencl}
-\usepackage{float}
-\makenomenclature
-% This will add the units
-%----------------------------------------------
-\newcommand{\nomunit}[1]{%
-\renewcommand{\nomentryend}{\hspace*{\fill}#1}}
-%----------------------------------------------
+%==============================================================
+% Load all the packages needed
+%==============================================================
+%
+% \usepackage[ % this must be after author info!
+% 	%pdfcreator={LaTeX},	
+% 	pdfkeywords={}, 
+% 	pdfpagemode=UseOutlines, 
+% 	pdfdisplaydoctitle=true, 
+% 	pdflang=en, 
+% 	colorlinks=false,	
+% 	linkcolor=LinkColor, 
+% 	citecolor=LinkColor, 
+% 	filecolor=LinkColor, 
+% 	urlcolor=LinkColor,
+% 	menucolor=LinkColor, 
+%   bookmarks=true,
+%   bookmarksnumbered=true
+% ]{hyperref}
 
-%%% Flow chart stuff:
-\usepackage{tikz}
-\usetikzlibrary{shapes.geometric, arrows}
-\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black, fill=red!30]
-\tikzstyle{io} = [rectangle, rectangle, minimum width=0.0cm, minimum height=0.7cm, draw=none, fill=white]
-\tikzstyle{process} = [rectangle, minimum width=1cm, minimum height=1cm, text centered, draw=black, fill=orange!30]
-\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=0.7cm, text centered, draw=black, fill=green!30]
-\tikzstyle{arrow} = [thick,->,>=stealth]
-\tikzstyle{white-box} = [rectangle, minimum width=2cm, minimum height=0.7cm, text centered, draw=black, fill=white]
-\tikzstyle{black-box} = [rectangle, minimum width=2cm, minimum height=0.7cm, text centered, draw=black, fill=black, text=white]
-\tikzstyle{grey-box} = [rectangle, minimum width=2cm, minimum height=0.7cm, text centered, draw=black, fill=gray, text=black]
+\usepackage{hyperref}
+\usepackage{changepage}
+%\usepackage[showframe=true]{geometry}
 
-\makeatletter
-\tikzset{
-    database top segment style/.style={draw},
-    database middle segment style/.style={draw},
-    database bottom segment style/.style={draw},
-    database/.style={
-        path picture={
-            \path [database bottom segment style]
-                (-\db@r,-0.5*\db@sh) 
-                -- ++(0,-1*\db@sh) 
-                arc [start angle=180, end angle=360,
-                    x radius=\db@r, y radius=\db@ar*\db@r]
-                -- ++(0,1*\db@sh)
-                arc [start angle=360, end angle=180,
-                    x radius=\db@r, y radius=\db@ar*\db@r];
-            \path [database middle segment style]
-                (-\db@r,0.5*\db@sh) 
-                -- ++(0,-1*\db@sh) 
-                arc [start angle=180, end angle=360,
-                    x radius=\db@r, y radius=\db@ar*\db@r]
-                -- ++(0,1*\db@sh)
-                arc [start angle=360, end angle=180,
-                    x radius=\db@r, y radius=\db@ar*\db@r];
-            \path [database top segment style]
-                (-\db@r,1.5*\db@sh) 
-                -- ++(0,-1*\db@sh) 
-                arc [start angle=180, end angle=360,
-                    x radius=\db@r, y radius=\db@ar*\db@r]
-                -- ++(0,1*\db@sh)
-                arc [start angle=360, end angle=180,
-                    x radius=\db@r, y radius=\db@ar*\db@r];
-            \path [database top segment style]
-                (0, 1.5*\db@sh) circle [x radius=\db@r, y radius=\db@ar*\db@r];
-        },
-        minimum width=2*\db@r + \pgflinewidth,
-        minimum height=3*\db@sh + 2*\db@ar*\db@r + \pgflinewidth,
-    },
-    database segment height/.store in=\db@sh,
-    database radius/.store in=\db@r,
-    database aspect ratio/.store in=\db@ar,
-    database segment height=0.1cm,
-    database radius=0.25cm,
-    database aspect ratio=0.35,
-    database top segment/.style={
-        database top segment style/.append style={#1}},
-    database middle segment/.style={
-        database middle segment style/.append style={#1}},
-    database bottom segment/.style={
-        database bottom segment style/.append style={#1}}
+\usepackage{comment}
+\hypersetup{pdfcreator={LaTeX},	
+	pdfkeywords={}, 
+	pdfpagemode=UseOutlines, 
+	pdfdisplaydoctitle=true, 
+	pdflang=en, 
+	colorlinks=false,	
+	linkcolor=LinkColor, 
+	citecolor=LinkColor, 
+	filecolor=LinkColor, 
+	urlcolor=LinkColor,
+	menucolor=LinkColor, 
+  bookmarks=true,
+  bookmarksnumbered=true}
+
+\pdfstringdefDisableCommands{%
+	% If hard space is used in the title, hyperref will issue warnings.
+	% Warnings from other LaTeX characters can be supressed similarily.
+	% https://tex.stackexchange.com/questions/10555/hyperref-warning-token-not-allowed-in-a-pdf-string
+	\def~{ }%
 }
-\makeatother
-
-
-\def\equationautorefname~#1\null{Eq.~(#1)\null}
-\def\figureautorefname~#1\null{Figure~#1\null}
-\def\tableautorefname~#1\null{Table~#1\null}
-
-\usepackage{tocloft}  % No page number of appended papers
-\usepackage{appendix}
-% % % Biblatex
-\usepackage[section]{placeins}  % This prevents placing floats before a section.
-
-\addbibresource{library.bib}  % Bibliography file
-\renewcommand{\cite}{\parencite}
-
-% Remove URLs from common (easy-to-find) entries.
-\AtEveryBibitem{%
-  \ifboolexpr%
-    {%
-      test { \ifentrytype{book} }
-      or
-      test { \ifentrytype{inbook} }
-      or
-      test { \ifentrytype{inproceedings} }
-      or
-      test { \ifentrytype{incollection} }
-      or
-      test { \ifentrytype{article} }
-    }
-    {\clearfield{url}}
-    {}%
+\hypersetup{
+	pdftitle={Thesis for \TheThesisType}, 
+	pdfauthor={\TheAuthor}, 
+	pdfsubject={\TheTitle}
 }
-% End Biblatex
+\addbibresource{library.bib} % Reference list for Kappa or Monograph.
+\usepackage{TemplateFiles/ChalmersThesis}
 
+\newcommand{\needref}{\textcolor{red}{(source)}}
+\hyphenation{nit-ri-fic-at-ion de-nit-ri-fic-at-ion bio-de-grad-ab-le re-im-ple-men-ted eu-tro-phi-ca-ti-on LibRAS bio-fil-ter}
 
-% % % New environments
-
-% \newenvironment{env-name}[optional-number-of-args]{insert-before}{insert-after}
-
-% \newenvironment{env-name}[optional-number-of-args][default-args]{insert-before}{insert-after}
-
-\newenvironment{abstract}{
-  \begin{center}
-    {\bfseries Abstract\par}  % \bfseries - some bold font, \par - end of paragraph (as empty line)
-  \end{center}
-  \quotation                  % extra indent from left and right
-  \noindent
-}
-{\par\endquotation}
-
-\newenvironment{keywords}%
-{{\bfseries Keywords:}}%
-{\par}%
-% % % End new environments
-
-
-% Begin page content adjustments for putting more text on pages.
-\renewcommand{\topfraction}{.85}       % max fraction of floats at top
-\renewcommand{\bottomfraction}{.7}     % max fraction of floats at bottom
-\renewcommand{\textfraction}{.15}      % minimal text wrt. figs
-\renewcommand{\floatpagefraction}{.66} % fraction for page of floats. floatpagefraction MUST be less than topfraction 
-\renewcommand{\dbltopfraction}{.66}    % fit big float above 2-col. text
-\renewcommand{\dblfloatpagefraction}{.66}
-\setcounter{topnumber}{9}
-\setcounter{bottomnumber}{9}
-\setcounter{totalnumber}{20}
-\setcounter{dbltopnumber}{9}
-\widowpenalty=300                             % widow (at the beginning of page)
-\clubpenalty=300                              % orphans (at the end of page)
-\setlength{\parskip}{0ex plus 0.5ex}  % space between paragraphs
-% End page content adjustments
-
-% % %
-% Begin remove page numbers from the "Part I" pages
-\fancypagestyle{veryempty}{% no headers, no page numbers
-  \fancyhf{} % remove everything
-  \fancyfoot{}
-  \renewcommand{\headrulewidth}{0pt} % remove lines as well
-  \renewcommand{\footrulewidth}{0pt}
-}
-\makeatletter
-\renewcommand\part{%
-  \if@openright
-    \cleardoublepage
-  \else
-    \clearpage
-  \fi
-  \thispagestyle{veryempty}%
-  \if@twocolumn
-    \onecolumn
-    \@tempswatrue
-  \else
-    \@tempswafalse
-  \fi
-  \null\vfil
-  \secdef\@part\@spart}
-\makeatother
-% End remove page numbers from the "Part I" pages
-
-
-% % % % %
-
-\input{frontmatter/common-basic-info}     % author, title, etc
-
-\title{\thesistitle}
-\author{\thesisauthor}
-
-\pdfinfo{%
-  /Title (\thesistitle)
-  /Author (\thesisauthor)
-}
-
-% Compression options
-\pdfminorversion=5
-\pdfobjcompresslevel=3  % compression requires \pdfminorversion at least 5
-\pdfcompresslevel=9     % compression requires \pdfminorversion at least 5
-
+\include{TemplateFiles/preamble_old}
 
 \begin{document}
 
-%\input{frontmatter/standard-cover-page}
+\newpage
+\thispagestyle{empty}
 
-\frontmatter                  % roman page numbers
+\begin{center}
+\begin{normalsize}  
+THESIS FOR THE DEGREE OF LICENTIATE OF ENGINEERING
+\end{normalsize}
 
-\input{frontmatter/standard-title-page}
+%\vspace{0.5cm}
+%\hrule
+\vspace{3 cm}
+{\large \textbf{\TitlePageTitle}\par}
+\vspace{1.5 cm}
+{\normalsize XIAO LANG \par} 
+\vspace{5 cm}
+\includegraphics[width=3.5cm]{TemplateFiles/logos/chalmers_logo}
+\vfill
+\vspace{0.5 cm}
+Department of Mechanics and Maritime Sciences\\
+CHALMERS UNIVERSITY OF TECHNOLOGY \\
+Gothenburg, Sweden, \TheYear
+\end{center}
 
-\input{frontmatter/standard-copyrights-page}
+\newpage
 
-%\input{frontmatter/dedications-page}
+%==============================================================
+% ISSN Information
+%==============================================================
+\thispagestyle{empty}
 
-% Add abstract to the ToC
-\cleardoublepage              % advance the pages
-\phantomsection               % put pdf anchor
-\addcontentsline{toc}{chapter}{Abstract}  % add toc line with target at the last anchor
-\chapter*{Abstract}
-\vspace*{-1cm}                % More space for abstract text
-\input{frontmatter/abstract}
+\vspace*{9.9 cm}
 
-\phantomsection               % put pdf anchor
-\addcontentsline{toc}{chapter}{Acknowledgments}  % add toc line with target at the last anchor
-\chapter*{Acknowledgments}
-\input{frontmatter/acknowledgments}
+\noindent\textbf{\ISSNPageTitle}\\
+\ifdefined \ISSNPageSubitle \if \ISSNPageSubitle\empty\else
+    \noindent\footnotesize\textit{\ISSNPageSubitle}\\
+\fi\fi\\
+{XIAO LANG}\\
+%\vspace{1.0 cm}\\
+\\
+\copyright~XIAO LANG,~2021\\ 
+%\vspace{0.5 cm}\\
+\\
+Report No 2021:04\\
+%\vspace{0.5 cm}
+\\
+\noindent Chalmers University of Technology \\
+Department of \TheDepartment \\
+Division of Marine Technology\\
+SE-412 96, Gothenburg\\
+Sweden \\
+Telephone: +46 (0)31-772 1000 \\
+\texttt{www.chalmers.se} \\
+%\vfill
+%\vspace{1.0 cm}\\
+\\
+\noindent{Printed by \ThePrinter \\
+Gothenburg, Sweden, 2021}
 
-\cleardoublepage              % advance the pages
-\phantomsection               % put pdf anchor
-\addcontentsline{toc}{chapter}{List of Publications}  % add toc line with target at the last anchor
-\chapter*{List of Publications}
-\input{frontmatter/publications-list}
-\input{nomenclature}
+\newpage
 
-\cleardoublepage              % advance the pages
-\phantomsection               % put pdf anchor
-\addcontentsline{toc}{chapter}{List of Acronyms}  % add toc line with target at the last anchor
-\chapter*{List of Acronyms}
-\input{frontmatter/acronyms}
 
-% add Contents to PDF bookmarks, but do not add it to the 'printed' Contents
-\cleardoublepage
-\phantomsection
-% \pdfbookmark[level]{text-to-display-in-outline}{unique-pdf-anchor-name}, chapter is level 0
-\pdfbookmark[0]{Contents}{Contents}
+%==============================================================
+% Dedication page
+%==============================================================
+
+\thispagestyle{empty}
+\centerline{}
+\vspace{8cm}
+
+%\rightline{{\emph{\TheDedication}}}
+\centerline{{\emph{\TheDedication}}}
+\thispagestyle{empty}
+
+\EmptyPage % back side of dedication
+
+%==============================================================
+% Abstract
+%==============================================================
+
+% Now we start numbering the pages, so tell hyperref that pages
+% might be referred to.
+
+\hypersetup{pageanchor=true}\pagenumbering{roman}
+\setcounter{page}{1}
+
+
+% Reset parindent to original value
+\setlength{\parindent}{1em}
+
+\noindent\textbf{Development of Speed-power Performance Models for Ship Voyage Optimization}\\
+
+\noindent XIAO LANG\\
+\noindent Chalmers University of Technology\\
+\noindent Department of Mechanics and Maritime Sciences\\
+\noindent Division of Marine Technology
+%\hskip
+\vspace{-0.35cm}
+\section*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\input{Lic_arxiv/YourThesis/Abstract}
+
+\bigskip
+% This needs to go in its own paragraph -- don't remove blank line above
+% Keywords list, notice first one beigns with capital and the list ends with full stop
+\noindent\textbf{Keywords:} added resistance due to waves \TheKeyword
+
+\EmptyPageWithNumber % back side of abstract
+
+
+%==============================================================
+% Acknowledgments
+%==============================================================
+
+
+\section*{Preface}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+\input{Lic_arxiv/YourThesis/Acknowledgement_modfied}
+
+\newpage
+\EmptyPageWithNumber
+%\section*{Financial Support}
+%\addcontentsline{toc}{chapter}{Financial Support}
+%\input{FinancialSupport.tex}
+
+
+
+%==============================================================
+% Table of Contents
+%==============================================================
+
 \tableofcontents
+\clearpage
 
-\mainmatter                   % normal arabic page numbers
+%\EmptyPage
 
-\part{Introductory chapters}
 
-% Headers, footers
-\fancyfoot{}                  % clean all
-\fancyhead[RE]{\textit{\nouppercase{\rightmark}}}
-\fancyhead[RO]{\thepage}
-\fancyhead[LE]{\thepage}
-\fancyhead[LO]{\textit{\nouppercase{\leftmark}}}
 
-%  \begin{refsection}
+
+%==============================================================
+% Publication list
+%==============================================================
+
+\setlength{\parindent}{0pt}
+
+%To get the proper list of publications:
+% compile the publication in a random tex file (call it mypub.tex)
+% open the bbl file (this is the mypub.bbl)
+% copy the bibitem and paste here
+
+\section*{List of appended papers}
+\addcontentsline{toc}{chapter}{List of appended papers}
+\includelistofpapers
+\setlength{\parindent}{1em}
+\EmptyPageWithNumber % back side of publication list
+
+\newpage
+\setlength{\parindent}{0pt}
+\section*{List of other published papers by the author}
+\addcontentsline{toc}{chapter}{List of other published papers by the author}
+\includelistofotherpapers
+\setlength{\parindent}{1em}
+\EmptyPageWithNumber % back side of publication list
+
+%==============================================================
+% Acronyms
+%==============================================================
+\newpage
+
+\section*{Nomenclature}
+\vspace{0.5cm}
+\addcontentsline{toc}{chapter}{Nomenclature}
+
+\textit{\large{Greek notations}}
+
+\input{Greek.tex}
+
+\noindent\textit{\large{Latin notations}}
+
+\input{Latin.tex}
+%\clearpage
+%\section*{Mathematical symbols}
+%\vspace{1cm}
+%\addcontentsline{toc}{chapter}{Mathematical symbols}
+%\input{parts/symbols}
+
+
+%==============================================================
+% Part 1 : The overview
+%==============================================================
+
+%\setcounter{secnumdepth}{3}
+
+% Use the scrheadings from KOMA-script. Set the even (left page)
+% header to display the chapter title. Odd pages (right page)
+% display the section title.
+\pagestyle{scrheadings}
+
+\automark[section]{chapter}
+
+
+
+\begin{refsection} % Bibliography Marker DNR
+
+%\part{Overview}
+
+\input{Content.tex}
+
+\printbibliography[title=References]
+
+\end{refsection}
+\setcounter{page}{11} % SET MANUALLY
+\renewcommand{\thepage}{\arabic{page}}
+
+%==============================================================
+% Part 2 : The papers
+%==============================================================
+%\part{Papers}
+\setcounter{secnumdepth}{2}
+
+\initpapers
+\renewcommand\bibname{References}
+
+% Set the KOMA-script page headers to display Paper A on even
+% (left) pages and section title on odd (right) pages.
+\automark{chapter}
+\renewcommand\sectionmark[1]{\markright{\MakeMarkcase {\thesection\hskip .5em\relax#1}}}
+\rohead{\rightmark}
+\lehead{Paper \Alph{paper}}
+\rofoot{\pagemark}
+\lefoot{\pagemark}
+
+
+
+
+%==============================================================
+% ADD YOUR PAPERS HERE: <<<
+%==============================================================
 
 \include{kappa/body}
 
 \printbibliography[heading=bibintoc]
 
-%  \end{refsection}
-
-\cleardoublepage
-
-%\printbibliography[heading=subbibintoc] % biblatex bibliography
-
-
-% % % Preparations before Part II. In this part one chapter = one paper
-
-\renewcommand{\chaptername}{Paper}
-                              % write 'Paper' instead of 'Chapter' in the title
-
-\setcounter{chapter}{0}       % reset chapter numbers after Part I
-
-% Fix hyperlinks to chapters/papers after chapter counter reset, see
-% http://tex.stackexchange.com/a/6099
-\renewcommand\theHchapter{appendedPaper.\arabic{chapter}}
-
-\renewcommand{\thesection}{\arabic{section}}
-                              % exclude chapter number from section number
-                              % Figures, Tables, etc are still prefixed by chapter number.
-                              % For algorithms numbering see definition of
-                              % \newfloat{algorithm} above.
-
-\newcommand{\paper}[7]
-% #1 Paper Title
-% #2 Short Title for page headers (ToC has the full title)
-% #3 Label for later (or earlier) \ref:s
-% #4 Authors
-% #5 Where published
-% #6 Comment (like "reprinted with a kind permission" and "reformatted for uniformity")
-% #7 File to input
-{
-  \chapter{#1\label{#3}}      % Title as Chapter
-  \chaptermark{#2}            % Short title for the page header
-  \thispagestyle{empty}       % no page numbers
-  {\Large #4}\par             % authors
-  \vspace{1cm}
-  \noindent\emph{\Large #5}\par % where published
-  \vspace{3cm}
-  \noindent\emph{\Large #6}   % Comment
-%  \cleardoublepage            % skip back side of the page
-%  \thispagestyle{plain}       % no header above paper title
-%  \begin{center}
-%    {\Large \bfseries Paper~\thechapter. #1}\par % title again
-%    \vspace{1pc}
-%    #4 \par                   % authors again
-%    \vspace{3pc}
-%  \end{center}
-%  \begin{refsection}          % start of biblatex's refsection for sub-bibliography
-%  \input{#7}                  % paper itself, starting from abstract (no title)
-%  \printbibliography[heading=subbibintoc] % biblatex bibliography
-%  \end{refsection}            % end of biblatex refsection
-}
-
-\newcommand{\reformatted}{The paper was reformatted for uniformity, but otherwise is unchanged.}
-
-\addtocontents{toc}{\cftpagenumbersoff{chapter}}
-
-\part{Appended papers}        % in this part one chapter = one paper
-
-% Example of using the command \paper defined above: 
-\paper{Analysis of roll damping model scale data}
-      {~}
-      {pap:rolldamping}
-      {Martin Alexandersson, Wengang Mao and Jonas Ringsberg}
-      {Ships and Offshore Structures 16.sup1. Publisher: Taylor \& Francis}
-      {~}
-
-\paper{System identification of {Vessel} {Manoeuvring} {Models}}
-      {~}
-      {pap:pit}
-      {Martin Alexandersson, Wengang Mao and Jonas Ringsberg}
-      {Ocean Engineering}
-      {~}
+%==============================================================
+% Your Thesis is Done. Congratz!
+%==============================================================
 
 \end{document}
